@@ -1,0 +1,36 @@
+version: "3.7"
+services:
+  halyard:
+    build:
+      context: .
+    volumes:
+      - halyard-data:/home/spinnaker/.hal
+    environment:
+      - "SPINNAKER_VERSION=1.18.5"
+      - "KUBE_ACCOUNT=my-k8s-v2-account"
+      - "KUBE_CONTEXT=docker-for-desktop"
+      - "MINIO_ENDPOINT=http://host.docker.internal:9001"
+      - "MINIO_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE"
+      - "MINIO_SECRET_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+    ports:
+      # https://www.spinnaker.io/reference/architecture/#port-mappings
+      - "9000:9000"
+      - "8084:8084"
+  minio:
+    image: minio/minio
+    environment:
+      - "MINIO_DOMAIN=host.docker.internal"
+      - "MINIO_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE"
+      - "MINIO_SECRET_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+    command:
+      - "server"
+      - "/data"
+    volumes:
+      - minio-data:/data
+    ports:
+      # https://docs.min.io/docs/minio-docker-quickstart-guide.html
+      - "9001:9000"
+
+volumes:
+  halyard-data:
+  minio-data:
